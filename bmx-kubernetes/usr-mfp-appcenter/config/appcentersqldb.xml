@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-I43 (C) Copyright IBM Corp.
+  2015, 2015. All Rights Reserved. US Government Users Restricted Rights -
+  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp. -->
+  
+  <server description="appcenter">
+
+<!--SQLDB specific data source entries for MobileFirst Platform Application Center -->
+    <dataSource jndiName="jdbc/AppCenterDS" transactional="false">
+        <jdbcDriver libraryRef="DB2Lib"/>
+        <properties.db2.jcc databaseName="${env.APPCNTR_DB2_DATABASE_NAME}" password="${env.APPCNTR_DB2_PASSWORD}" portNumber="${env.APPCNTR_DB2_PORT}" serverName="${env.APPCNTR_DB2_SERVER_NAME}" user="${env.APPCNTR_DB2_USERNAME}" currentSchema="${env.APPCNTR_DB2_SCHEMA}" sslConnection="${env.SSL_CONNECTION}"/>
+    </dataSource>
+ </server>

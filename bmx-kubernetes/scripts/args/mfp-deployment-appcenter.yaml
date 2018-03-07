@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mfp-configmap-appcenter
+  namespace: default
+data:
+  mfpf.properties: |-
+    APPCENTER_ADMIN_USER=demo
+    APPCENTER_ADMIN_PASSWORD=demo
+    APPCNTR_DB2_SERVER_NAME=<Will be filled by prepareappcenterdbs.sh>
+    APPCNTR_DB2_PORT=<Will be filled by prepareappcenterdbs.sh>
+    APPCNTR_DB2_DATABASE_NAME=<Will be filled by prepareappcenterdbs.sh>
+    APPCNTR_DB2_USERNAME=<Will be filled by prepareappcenterdbs.sh>
+    APPCNTR_DB2_PASSWORD=<Will be filled by prepareappcenterdbs.sh>
+    APPCNTR_DB2_SCHEMA=<Will be filled by prepareappcenterdbs.sh>
+    SSL_CONNECTION=<Will be filled by prepareappcenterdbs.sh>
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mfp-ingress
+  namespace: default
+  annotations:
+    ingress.bluemix.net/client-max-body-size: "200m"
+    ingress.bluemix.net/proxy-read-timeout: "300s"
+    ingress.bluemix.net/proxy-connect-timeout: "300s"
+spec:
+  rules:
+  - host: <my-cluster.us-south.containers.mybluemix.net>
+    http:
+      paths:
+      - path: /appcenterconsole
+        backend:
+          serviceName: mfpappcenter
+          servicePort: 9080
+      - path: /applicationcenter
+        backend:
+          serviceName: mfpappcenter
+          servicePort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfpappcenter
+  namespace: default
+  labels:
+    app: mfpappcenter
+spec:
+  type: ClusterIP
+  selector:
+    app: mfpappcenter
+  ports:
+   - protocol: TCP
+     port: 9080
+     name: tcp-9080
+   - protocol: TCP
+     port: 9443
+     name: tcp-9443
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mfpappcenter
+  namespace: default
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: mfpappcenter
+      labels:
+        app: mfpappcenter
+    spec:
+      containers:
+        - name: mfpappcenter
+          image: <registry.ng.bluemix.net/repository/mfpappcenter:latest>
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mfpconfigvolume
+              mountPath: /opt/ibm/MobileFirst/envs/mfpenvfile
+      volumes:
+        - name: mfpconfigvolume
+          configMap:
+            name: mfp-configmap-appcenter
+      imagePullSecrets:
+        - name: bluemix-default-secret
+---

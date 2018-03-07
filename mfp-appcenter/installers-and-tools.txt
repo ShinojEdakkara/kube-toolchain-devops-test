@@ -1,0 +1,1 @@
+For installers and db tools you can download it from the on-permise application center installation folders (installer and tools folders).

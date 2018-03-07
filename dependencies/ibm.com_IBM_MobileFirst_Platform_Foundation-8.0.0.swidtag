@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SoftwareIdentity name="IBM MobileFirst Platform Foundation" tagId="ibm.com-fc867a66d6c94261a4771de8baf585bd-8.0.0" version="8.0.0" versionScheme="multipartnumeric" xmlns="http://standards.iso.org/iso/19770/-2/2015/schema.xsd" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.iso.org/iso/19770/-2/2015-current/schema.xsd schema.xsd">
+    <Meta persistentId="fc867a66d6c94261a4771de8baf585bd"/>
+    <Meta taxonomyCode="SSZPHA"/>
+    <Meta taggingProcess="4-1-20160406"/>
+    <Entity name="IBM" regid="ibm.com" role="licensor tagCreator softwareCreator"/>
+</SoftwareIdentity>

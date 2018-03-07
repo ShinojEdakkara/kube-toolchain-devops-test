@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-I43 (C) Copyright IBM Corp.
+  2015, 2016. All Rights Reserved. US Government Users Restricted Rights -
+  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp. -->
+<server description="new server">
+	
+	<!-- MFPF Server properties JNDI entries -->	
+	
+	<!--  jndiEntry jndiName="${env.MFPF_RUNTIME_ROOT}/mfp.analytics.url" value='"https://<AnalyticsContainerGroupRoute>:443/analytics-service/rest"'/>
+    <jndiEntry jndiName="${env.MFPF_RUNTIME_ROOT}/mfp.analytics.console.url" value='"https://<AnalyticsContainerPublicRoute>:443/analytics/console"'/>
+    <jndiEntry jndiName="${env.MFPF_RUNTIME_ROOT}/mfp.analytics.username" value='"<AnalyticsUserName>"'/>
+    <jndiEntry jndiName="${env.MFPF_RUNTIME_ROOT}/mfp.analytics.password" value='"<AnalyticsPassword>"'/-->
+    
+    
+    <!-- jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.analytics.endpoint" value='"https://<AnalyticsContainerGroupRoute>:443/analytics-service/rest"'/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.services.ext.analytics" value="com.ibm.mfp.push.server.analytics.plugin.AnalyticsPlugin"/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.analytics.user" value='"<AnalyticsUserName>"'/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.analytics.password" value='"<AnalyticsPassword>"'/-->
+    
+    <jndiEntry jndiName="${env.MFPF_RUNTIME_ROOT}/mfp.authorization.server" value='"embedded"'/>
+    
+    <!-- Declare the JNDI properties for the MobileFirst Administration Service. -->
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.admin.push.url" value='"http://${env.ADMIN_HOST}:${env.MFPF_SERVER_HTTPPORT}/${env.MFPF_PUSH_ROOT}"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.admin.authorization.server.url" value='"http://${env.ADMIN_HOST}:${env.MFPF_SERVER_HTTPPORT}/${env.MFPF_RUNTIME_ROOT}"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.push.authorization.client.id" value='"push"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.push.authorization.client.secret" value='"${env.MFPF_ADMIN_PASSWORD}"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.admin.authorization.client.id" value='"admin"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.admin.authorization.client.secret" value='"${env.MFPF_ADMIN_PASSWORD}"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.config.service.user" value='"${env.MFPF_SERVER_ADMIN_USER}"'/>
+    <jndiEntry jndiName="${env.MFPF_ADMIN_ROOT}/mfp.config.service.password" value='"${env.MFPF_SERVER_ADMIN_PASSWORD}"'/>
+   
+</server>

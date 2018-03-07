@@ -1,0 +1,60 @@
+FROM ubuntu:14.04
+MAINTAINER IBM
+
+RUN apt-get update \
+	&& apt-get install -y \
+    wget \
+    curl \
+    supervisor \
+    && rm -rf /var/lib/apt/lists/*
+   
+
+# Install JRE
+
+ADD dependencies/ibm-java-jre-8.0-3.0-linux-x86_64_*.tgz /opt/ibm/   
+ENV JAVA_HOME /opt/ibm/ibm-java-x86_64-80
+
+COPY dependencies/license-check /opt/ibm/docker/
+COPY dependencies/ibm.com_IBM_MobileFirst_Platform_Foundation-8.0.0.swidtag /opt/ibm/MobileFirst/swidtag/
+
+# Install WebSphere Liberty
+
+ADD dependencies/wlp-base-embeddable-16.0.0.3_*.tar.gz /opt/ibm/
+
+# Create 'mfp' profile
+RUN /opt/ibm/wlp/bin/server create mfp \
+    && rm -rf /opt/ibm/wlp/usr/servers/.classCache \
+    && rm -rf /opt/ibm/wlp/usr/servers/mfp/apps/*
+
+ADD mfpf-libs/mfpf-analytics.tgz /
+COPY licenses/ /opt/ibm/MobileFirst/licenses
+
+# Set password length and expiry for compliance with Vulnerability Advisor
+RUN sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS   90/' /etc/login.defs
+RUN sed -i 's/sha512/sha512  minlen=8/' /etc/pam.d/common-password
+
+RUN chmod u+x /opt/ibm/docker/license-check \
+	&& chmod u+x /opt/ibm/wlp/bin/liberty-run \
+	&& chmod +x /root/bin/run_supervisord \
+	&& mkdir /var/log/rsyslog \
+    && chown syslog /var/log/rsyslog
+
+ENTRYPOINT ["/bin/sh", "-c" ]
+CMD ["/root/bin/run_supervisord"]
+
+COPY usr-mfpf-analytics/bin/mfp-init /opt/ibm/wlp/bin/
+COPY usr-mfpf-analytics/bin/liberty-run /opt/ibm/wlp/bin/
+RUN chmod u+x /opt/ibm/wlp/bin/mfp-init
+COPY usr-mfpf-analytics/security /opt/ibm/wlp/usr/servers/mfp/resources/security/
+COPY usr-mfpf-analytics/jre-security /opt/ibm/ibm-java-x86_64-80/jre/lib/security/
+COPY usr-mfpf-analytics/env /opt/ibm/wlp/usr/servers/mfp/
+COPY usr-mfpf-analytics/config/*.xml /opt/ibm/wlp/usr/servers/mfp/configDropins/overrides/
+
+RUN apt-get update \ 
+	&& apt-get upgrade -y 
+
+# Expose port 54328: The elastic search transport port for multicast  
+EXPOSE 54328
+EXPOSE 9600
+
+ENV LICENSE accept

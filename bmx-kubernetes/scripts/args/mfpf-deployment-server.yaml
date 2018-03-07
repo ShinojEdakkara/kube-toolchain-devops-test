@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mfp-configmap-server
+  namespace: default
+data:
+  mfpf.properties: |-
+    MFPF_ADMIN_USER=admin
+    MFPF_ADMIN_PASSWORD=admin
+    ANALYTICS_CLUSTER_NAME=mfpanalytics
+    INGRESS_HOST_FOR_ANALYTICS_CONSOLE=test.mobile-dev.us-south.containers.mybluemix.net
+    ANALYTICS_ADMIN_USER=admin
+    ANALYTICS_ADMIN_PASSWORD=admin
+    MFPF_ADMIN_DB2_SERVER_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_ADMIN_DB2_PORT=<Will be filled by prepareserverdbs.sh>
+    MFPF_ADMIN_DB2_DATABASE_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_ADMIN_DB2_USERNAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_ADMIN_DB2_PASSWORD=<Will be filled by prepareserverdbs.sh>
+    MFPF_ADMIN_DB2_SCHEMA=<Will be filled by prepareserverdbs.sh>
+    SSL_CONNECTION=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_SERVER_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_PORT=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_DATABASE_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_USERNAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_PASSWORD=<Will be filled by prepareserverdbs.sh>
+    MFPF_RUNTIME_DB2_SCHEMA=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_SERVER_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_PORT=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_DATABASE_NAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_USERNAME=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_PASSWORD=<Will be filled by prepareserverdbs.sh>
+    MFPF_PUSH_DB2_SCHEMA=<Will be filled by prepareserverdbs.sh>
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mfp-ingress
+  namespace: default
+  annotations:
+    ingress.bluemix.net/client-max-body-size: "200m"
+    ingress.bluemix.net/proxy-read-timeout: "300s"
+    ingress.bluemix.net/proxy-connect-timeout: "300s"
+spec:
+  rules:
+  - host: <my-cluster.us-south.containers.mybluemix.net>
+    http:
+      paths:
+      - path: /mfpconsole
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+      - path: /mfp
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+      - path: /imfpush
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+      - path: /mfpadmin
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+      - path: /mfpadminconfig
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+      - path: /doc
+        backend:
+          serviceName: mfpserver
+          servicePort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfpserver
+  namespace: default
+  labels:
+    app: mfpserver
+spec:
+  type: ClusterIP
+  selector:
+    app: mfpserver
+  ports:
+   - protocol: TCP
+     port: 9080
+     name: tcp-9080
+   - protocol: TCP
+     port: 9443
+     name: tcp-9443
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mfpserver
+  namespace: default
+spec:
+  replicas: 3
+  template:
+    metadata:
+      name: mfpserver
+      labels:
+        app: mfpserver
+    spec:
+      containers:
+        - name: mfpserver
+          image: <registry.ng.bluemix.net/repository/mfpfserver:latest>
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: mfpconfigvolume
+              mountPath: /opt/ibm/MobileFirst/envs/mfpenvfile
+            - name: mfpservervolume
+              mountPath: /opt/ibm/wlp/usr/servers/mfp/logs
+              subPath: serverlogs
+      volumes:
+        - name: mfpservervolume
+          persistentVolumeClaim:
+            claimName: <mfppvc>
+        - name: mfpconfigvolume
+          configMap:
+            name: mfp-configmap-server
+      imagePullSecrets:
+        - name: bluemix-default-secret
+---

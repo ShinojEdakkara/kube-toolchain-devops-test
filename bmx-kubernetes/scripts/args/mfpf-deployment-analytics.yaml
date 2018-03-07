@@ -1,0 +1,111 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mfp-configmap-analytics
+  namespace: default
+data:
+  mfpf.properties: |-
+    ANALYTICS_CLUSTER_NAME=mfpanalytics
+    ANALYTICS_ADMIN_USER=admin
+    ANALYTICS_ADMIN_PASSWORD=admin
+    ANALYTICS_DATA_DIRECTORY=/analyticsData
+    NUMBER_OF_SHARDS=3
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: mfp-ingress
+  namespace: default
+  annotations:
+    ingress.bluemix.net/client-max-body-size: "200m"
+    ingress.bluemix.net/proxy-read-timeout: "300s"
+    ingress.bluemix.net/proxy-connect-timeout: "300s"
+spec:
+  rules:
+  - host: <my-cluster.us-south.containers.mybluemix.net>
+    http:
+      paths:
+      - path: /analytics
+        backend:
+          serviceName: mfpanalytics
+          servicePort: 9080
+      - path: /analytics-service
+        backend:
+          serviceName: mfpanalytics
+          servicePort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfpanalytics
+  namespace: default
+  labels:
+    app: mfpanalytics
+spec:
+  type: ClusterIP
+  selector:
+    app: mfpanalytics
+  ports:
+   - protocol: TCP
+     port: 9080
+     name: tcp-9080
+   - protocol: TCP
+     port: 9443
+     name: tcp-9443
+   - protocol: TCP
+     port: 9600
+     name: transport-port-9600
+   - protocol: TCP
+     port: 9500
+     name: debug-port-9500
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mfpanalytics
+  namespace: default
+spec:
+  replicas: 2
+  template:
+    metadata:
+      name: mfpanalytics
+      labels:
+        app: mfpanalytics
+    spec:
+      containers:
+        - name: mfpanalytics
+          image: <registry.ng.bluemix.net/repository/mfpfanalytics:latest>
+          ports:
+          - containerPort: 9080
+          - containerPort: 9443
+          - containerPort: 9600
+          - containerPort: 9500
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "1024M"
+              cpu: "1"
+            limits:
+              memory: "1024M"
+              cpu: "1"
+          env:
+            - name: ANALYTICS_masternodes
+              value: "mfpanalytics:9600"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /opt/ibm/MobileFirst/envs/mfpenvfile
+            - name: mfpanalyticsvolume
+              mountPath: /analyticsData
+              subPath: analyticsData
+            - name: mfpanalyticsvolume
+              mountPath: /opt/ibm/wlp/usr/servers/mfp/logs
+              subPath: analyticslogs
+      volumes:
+        - name: mfpanalyticsvolume
+          persistentVolumeClaim:
+            claimName: <mfppvc>
+        - name: config-volume
+          configMap:
+            name: mfp-configmap-analytics
+      imagePullSecrets:
+        - name: bluemix-default-secret

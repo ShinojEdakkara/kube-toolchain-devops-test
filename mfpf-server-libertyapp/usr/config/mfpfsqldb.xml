@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-I43 (C) Copyright IBM Corp.
+  2015, 2015. All Rights Reserved. US Government Users Restricted Rights -
+  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp. -->
+  
+<server description="mfp">
+
+<!-- MFPF Server SQLDB specific data source entries for MobileFirst Administration Services, MobileFirst Configuration Services and MobileFirst Runtime -->	
+<!--AUTO GENERATED LINE by prepareserverdbs.sh. DO NOT EDIT
+    <dataSource jndiName="${env.MFPF_ADMIN_ROOT}/jdbc/mfpAdminDS" transactional="false">
+    	<connectionManager maxPoolSize="2" minPoolSize="1" connectionTimeout="10s" agedTimeout="30m"/>
+        <jdbcDriver libraryRef="mfpadmin/DB2Lib"/>
+        <properties.db2.jcc databaseName="${env.MFPF_ADMIN_DB2_DATABASE_NAME}" password="${env.MFPF_ADMIN_DB2_PASSWORD}" portNumber="${env.MFPF_ADMIN_DB2_PORT}" serverName="${env.MFPF_ADMIN_DB2_SERVER_NAME}" user="${env.MFPF_ADMIN_DB2_USERNAME}" currentSchema="${env.MFPF_ADMIN_DB2_SCHEMA}" sslConnection="${env.SSL_CONNECTION}" />
+    </dataSource>
+
+    <dataSource jndiName="${env.MFPF_CONFIG_ROOT}/jdbc/ConfigDS" transactional="false">
+    	<connectionManager maxPoolSize="2" minPoolSize="1" connectionTimeout="10s" agedTimeout="30m"/>
+        <jdbcDriver libraryRef="mfpadmin/DB2Lib"/>
+        <properties.db2.jcc databaseName="${env.MFPF_ADMIN_DB2_DATABASE_NAME}" password="${env.MFPF_ADMIN_DB2_PASSWORD}" portNumber="${env.MFPF_ADMIN_DB2_PORT}" serverName="${env.MFPF_ADMIN_DB2_SERVER_NAME}" user="${env.MFPF_ADMIN_DB2_USERNAME}" currentSchema="${env.MFPF_ADMIN_DB2_SCHEMA}" sslConnection="${env.SSL_CONNECTION}" />
+    </dataSource>
+
+    <dataSource jndiName="${env.MFPF_RUNTIME_ROOT}/jdbc/mfpDS" transactional="false">
+    	<connectionManager maxPoolSize="15" minPoolSize="2" connectionTimeout="10s" agedTimeout="30m"/>
+        <jdbcDriver libraryRef="mfpadmin/DB2Lib"/>
+        <properties.db2.jcc databaseName="${env.MFPF_RUNTIME_DB2_DATABASE_NAME}" password="${env.MFPF_RUNTIME_DB2_PASSWORD}" portNumber="${env.MFPF_RUNTIME_DB2_PORT}" serverName="${env.MFPF_RUNTIME_DB2_SERVER_NAME}" user="${env.MFPF_RUNTIME_DB2_USERNAME}" currentSchema="${env.MFPF_RUNTIME_DB2_SCHEMA}" sslConnection="${env.SSL_CONNECTION}" />
+    </dataSource>
+AUTO GENERATED LINE by prepareserverdbs.sh. DO NOT EDIT-->
+
+<!-- MFPF Server SQLDB specific data source and application entries for MobileFirst Push Service -->	
+
+<!--AUTO GENERATED LINE by prepareserverdbs.sh for push service. DO NOT EDIT
+    <dataSource jndiName="${env.MFPF_PUSH_ROOT}/jdbc/imfPushDS" transactional="false">
+    	<connectionManager maxPoolSize="5" minPoolSize="1" connectionTimeout="10s" agedTimeout="30m"/>
+        <jdbcDriver libraryRef="mfpadmin/DB2Lib"/>
+            <properties.db2.jcc databaseName="${env.MFPF_PUSH_DB2_DATABASE_NAME}" password="${env.MFPF_PUSH_DB2_PASSWORD}" portNumber="${env.MFPF_PUSH_DB2_PORT}" serverName="${env.MFPF_PUSH_DB2_SERVER_NAME}" user="${env.MFPF_PUSH_DB2_USERNAME}" currentSchema="${env.MFPF_PUSH_DB2_SCHEMA}" sslConnection="${env.SSL_CONNECTION}" />
+    </dataSource>
+    <application id="${env.MFPF_PUSH_ROOT}" location="mfp-push-service.war" name="${env.MFPF_PUSH_ROOT}" type="war">
+        <classloader delegation="parentLast">
+            <commonLibrary id="mfplib_imfpush">
+                <fileset dir="${wlp.install.dir}/lib" includes="com.ibm.ws.crypto.passwordutil*.jar"/>
+            </commonLibrary>
+        </classloader>
+    </application>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.authorization.server.url" value="http://${env.ADMIN_HOST}:${port}/${env.MFPF_RUNTIME_ROOT}/api" />
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.authorization.client.id" value="push"/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.authorization.client.secret" value="${env.MFPF_ADMIN_PASSWORD}"/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.services.ext.security" value="com.ibm.mfp.push.server.security.plugin.OAuthSecurityPlugin"/>
+    <jndiEntry jndiName="${env.MFPF_PUSH_ROOT}/mfp.push.db.type" value="DB"/>
+AUTO GENERATED LINE by prepareserverdbs.sh for push service. DO NOT EDIT-->
+</server>

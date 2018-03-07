@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-I43 (C) Copyright IBM Corp. 
+	2015, 2015. All Rights Reserved. US Government Users Restricted Rights - 
+	Use, duplication or disclosure restricted by GSA ADP Schedule Contract with 
+	IBM Corp. -->
+<server>
+
+	<!-- You can overwrite this file in your docker container either to extend 
+		the basic registry, or to replace the basic registry by an ldap registry -->
+	<basicRegistry id="applicationcenter-registry" realm="ApplicationCenter">
+        <user name="${env.APPCENTER_ADMIN_USER}" password="${env.APPCENTER_ADMIN_PASSWORD}" />
+        <group name="${env.APPCENTER_ADMIN_GROUP}">
+        	<member name="${env.APPCENTER_ADMIN_USER}"/>
+        </group>
+
+	</basicRegistry>
+</server>    

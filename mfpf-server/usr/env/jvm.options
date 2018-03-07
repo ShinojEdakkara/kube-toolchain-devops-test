@@ -1,0 +1,3 @@
+# Added by the IBM MFP <installMobileFirstAdmin> task for id 'mfpadmin'
+-Dcom.ibm.ws.jmx.connector.client.rest.readTimeout=180000
+

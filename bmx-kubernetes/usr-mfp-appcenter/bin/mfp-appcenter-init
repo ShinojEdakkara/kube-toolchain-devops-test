@@ -1,0 +1,172 @@
+#!/bin/bash
+# (C) Copyright IBM Corporation 2014.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if [ "$(ls -A /root/sshkey/)" ]
+	then
+	for file in /root/sshkey/*; do
+        chmod 600 $file
+        cat $file >> /root/.ssh/authorized_keys
+	done
+fi
+
+# wait for network stack initialization
+while ! ping -c1 ace.ng.bluemix.net &>/dev/null; do :; done
+
+IP_ADDRESS=$(echo $(hostname -I))
+HOSTNAME=`hostname`
+
+APPCENTER_HOST=$(echo $(hostname -I))
+
+envfile=/opt/ibm/wlp/usr/servers/appcenter/server.env
+
+if grep -q 'IP_ADDRESS=' $envfile
+then
+	sed -i "/IP_ADDRESS=.*/c\IP_ADDRESS=$IP_ADDRESS" $envfile
+else
+	echo IP_ADDRESS=$IP_ADDRESS >> $envfile
+fi
+
+if grep -q 'HOSTNAME=' $envfile
+then
+	sed -i "/HOSTNAME=.*/c\HOSTNAME=$HOSTNAME" $envfile
+else
+	echo HOSTNAME=$HOSTNAME >> $envfile
+fi
+
+if grep -q 'APPCENTER_HOST=' $envfile
+then
+	sed -i "/APPCENTER_HOST=.*/c\APPCENTER_HOST=$APPCENTER_HOST" $envfile
+else
+	echo APPCENTER_HOST=$APPCENTER_HOST >> $envfile
+fi
+
+if [ ! -z $TRACE_LEVEL ]
+then
+  echo TRACE_LEVEL=${TRACE_LEVEL//"~"/"="} >> $envfile
+fi
+
+if [ ! -z $MAX_LOG_FILES ]
+then
+  echo MAX_LOG_FILES=$MAX_LOG_FILES >> $envfile
+fi
+
+if [ ! -z $MAX_LOG_FILE_SIZE ]
+then
+  echo MAX_LOG_FILE_SIZE=$MAX_LOG_FILE_SIZE >> $envfile
+fi
+
+# if environment variables for the server are provided as environment parameters
+if [ -n "$APPCENTER_SERVER_HTTPPORT" ]
+then
+	sed -i "/APPCENTER_SERVER_HTTPPORT=.*/c\APPCENTER_SERVER_HTTPPORT=$APPCENTER_SERVER_HTTPPORT" $envfile
+fi
+
+if [ -n "$APPCENTER_SERVER_HTTPSPORT" ]
+then
+  sed -i "/APPCENTER_SERVER_HTTPSPORT=.*/c\APPCENTER_SERVER_HTTPSPORT=$APPCENTER_SERVER_HTTPSPORT" $envfile
+fi
+
+if [ -n "$APPCENTER_ROOT" ]
+then
+  sed -i "/APPCENTER_ROOT=.*/c\APPCENTER_ROOT=$APPCENTER_ROOT" $envfile
+fi
+
+if [ -n "$APPCENTER_CONSOLE_ROOT" ]
+then
+  sed -i "/APPCENTER_CONSOLE_ROOT=.*/c\APPCENTER_CONSOLE_ROOT=$APPCENTER_CONSOLE_ROOT" $envfile
+fi
+
+if [ -n "$APPCENTER_ADMIN_GROUP" ]
+then
+  sed -i "/APPCENTER_ADMIN_GROUP=.*/c\APPCENTER_ADMIN_GROUP=$APPCENTER_ADMIN_GROUP" $envfile
+fi
+
+if [ -n "$APPCENTER_DEPLOYER_GROUP" ]
+then
+  sed -i "/APPCENTER_DEPLOYER_GROUP=.*/c\APPCENTER_DEPLOYER_GROUP=$APPCENTER_DEPLOYER_GROUP" $envfile
+fi
+
+if [ -n "$APPCENTER_MONITOR_GROUP" ]
+then
+  sed -i "/APPCENTER_MONITOR_GROUP=.*/c\APPCENTER_MONITOR_GROUP=$APPCENTER_MONITOR_GROUP" $envfile
+fi
+
+if [ -n "$APPCENTER_OPERATOR_GROUP" ]
+then
+  sed -i "/APPCENTER_OPERATOR_GROUP=.*/c\APPCENTER_OPERATOR_GROUP=$APPCENTER_OPERATOR_GROUP" $envfile
+fi
+
+if [ -n "$APPCENTER_ADMIN_USER" ]
+then
+  sed -i "/APPCENTER_ADMIN_USER=.*/c\APPCENTER_ADMIN_USER=$APPCENTER_ADMIN_USER" $envfile
+fi
+
+if [ -n "$APPCENTER_ADMIN_PASSWORD" ]
+then
+  sed -i "/APPCENTER_ADMIN_PASSWORD=.*/c\APPCENTER_ADMIN_PASSWORD=$APPCENTER_ADMIN_PASSWORD" $envfile
+fi
+
+# DB2 specific
+if [ -n "$APPCENTER_DB2_DATABASE_NAME" ]
+then
+  cp /opt/ibm/wlp/bin/server_db2.xml /opt/ibm/wlp/usr/servers/appcenter/configDropins/overrides/
+  mv /opt/ibm/wlp/usr/servers/appcenter/configDropins/overrides/server_derbyConf.xml /opt/ibm/wlp/bin/
+  sed -i "/APPCNTR_DB2_DATABASE_NAME=.*/c\APPCNTR_DB2_DATABASE_NAME=$APPCNTR_DB2_DATABASE_NAME" $envfile
+fi
+
+if [ -n "$APPCNTR_DB2_PORT" ]
+then
+  sed -i "/APPCNTR_DB2_PORT=.*/c\APPCNTR_DB2_PORT=$APPCNTR_DB2_PORT" $envfile
+fi
+
+if [ -n "$APPCNTR_DB2_SERVER_NAME" ]
+then
+  sed -i "/APPCNTR_DB2_SERVER_NAME=.*/c\APPCNTR_DB2_SERVER_NAME=$APPCNTR_DB2_SERVER_NAME" $envfile
+fi
+
+if [ -n "$APPCNTR_DB2_USERNAME" ]
+then
+  sed -i "/APPCNTR_DB2_USERNAME=.*/c\APPCNTR_DB2_USERNAME=$APPCNTR_DB2_USERNAME" $envfile
+fi
+
+if [ -n "$APPCNTR_DB2_PASSWORD" ]
+then
+  sed -i "/APPCNTR_DB2_PASSWORD=.*/c\APPCNTR_DB2_PASSWORD=$APPCNTR_DB2_PASSWORD" $envfile
+fi
+
+if [ -n "$APPCNTR_DB2_SCHEMA" ]
+then
+  sed -i "/APPCNTR_DB2_SCHEMA=.*/c\APPCNTR_DB2_SCHEMA=$APPCNTR_DB2_SCHEMA" $envfile
+fi
+
+if [ -d /opt/ibm/MobileFirst/envs ]
+then
+  for customEnvDirectory in `ls /opt/ibm/MobileFirst/envs`
+  do
+      if [ -d /opt/ibm/MobileFirst/envs/${customEnvDirectory} ]
+      then
+           for customEnvFile in `ls /opt/ibm/MobileFirst/envs/${customEnvDirectory}`
+           do
+               echo "#Content from config map ${customEnvDirectory}/${customEnvFile}" >> ${envfile}
+               cat /opt/ibm/MobileFirst/envs/${customEnvDirectory}/$customEnvFile >>  ${envfile}
+               source /opt/ibm/MobileFirst/envs/${customEnvDirectory}/$customEnvFile
+           done
+      else
+          echo "#Content from config map ${customEnvDirectory}" >> ${envfile}
+          cat /opt/ibm/MobileFirst/envs/${customEnvDirectory} >>  ${envfile}
+          source /opt/ibm/MobileFirst/envs/${customEnvDirectory}
+      fi
+  done
+fi

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Licensed Materials - Property of IBM 5725-I43 (C) Copyright IBM Corp.
+  2015, 2015. All Rights Reserved. US Government Users Restricted Rights -
+  Use, duplication or disclosure restricted by GSA ADP Schedule Contract with
+  IBM Corp. -->
+<server description="new server">
+
+	<!-- MFPF Analytics properties JNDI entries -->
+	<jndiEntry jndiName="analytics/shards" value="${env.NUMBER_OF_SHARDS}"/>
+	<jndiEntry jndiName="analytics/replicas_per_shard" value="1"/>
+	<jndiEntry jndiName="analytics/masternodes" value="${env.ANALYTICS_masternodes}" />   
+
+</server>
