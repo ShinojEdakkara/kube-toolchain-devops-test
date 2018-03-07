@@ -1,0 +1,102 @@
+###############################################################################
+# Licensed Materials - Property of IBM.
+# Copyright IBM Corporation 2018. All Rights Reserved.
+# U.S. Government Users Restricted Rights - Use, duplication or disclosure
+# restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+# Contributors:
+# IBM Corporation - initial API and implementation
+###############################################################################
+
+###############################################################################
+# Default values for ibm-mobilefirst-foundation-analytics
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+###############################################################################
+
+###############################################################################
+## Architecture - e.g. amd64, s390x, ppc64le. If left empty, arch type will try
+## to be determined.
+## You can use kubectl version command to determine the architecture on the
+## desired worker node.
+###############################################################################
+arch: "amd64"
+
+###############################################################################
+## Common image variables
+###############################################################################
+image:
+  name: mfpf-analytics
+  tag: latest
+  pullPolicy: IfNotPresent
+
+###############################################################################
+## Scaling
+###############################################################################
+scaling:
+  replicaCount: 2
+
+###############################################################################
+## MobileFirst Operational Analytics Console Credentials
+###############################################################################
+mobileFirstAnalyticsConsole:
+  user: "admin"
+  password: "admin"
+
+###############################################################################
+## MobileFirst Operational Analytics specific details
+###############################################################################
+analyticsConfiguration:
+  clusterName: "mobilefirst"
+  numberOfShards: "2"
+  replicasPerShard: "2"
+  analyticsDataDirectory: "/analyticsData"
+
+###############################################################################
+## Persistence Storage
+###############################################################################
+## global persistence settings
+persistence:
+  enabled: true
+  useDynamicProvisioning: false
+
+dataVolume:
+  name: "data-stor"
+
+  ## Specify the name of the Existing Claim to be used by your application
+  ## empty string means don't use an existClaim
+  existingClaimName: ""
+
+  ## Specify the name of the StorageClass
+  ## empty string means don't use a StorageClass
+  storageClassName: ""
+  size: 20Gi
+
+###############################################################################
+## MobileFirst JNDI Configurations
+###############################################################################
+keystores:
+  keystoresSecretName: ""
+
+
+jndiConfigurations:
+  mfpfProperties: ""
+
+###############################################################################
+## Ingress
+###############################################################################
+ingress:
+  enabled: false
+  sslSecretName:
+
+###############################################################################
+## Resource constraints
+###############################################################################
+resources:
+  requests:
+    cpu: 1000m
+    memory: 2048Mi
+  limits:
+    cpu: 2000m
+    memory: 4096Mi
+

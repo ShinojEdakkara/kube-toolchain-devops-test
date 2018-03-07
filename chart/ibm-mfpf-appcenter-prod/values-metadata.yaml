@@ -1,0 +1,209 @@
+###############################################################################
+# Licensed Materials - Property of IBM.
+# Copyright IBM Corporation 2018. All Rights Reserved.
+# U.S. Government Users Restricted Rights - Use, duplication or disclosure
+# restricted by GSA ADP Schedule Contract with IBM Corp.
+#
+# Contributors:
+# IBM Corporation - initial API and implementation
+###############################################################################
+
+###############################################################################
+# Default values for ibm-mobilefirst-foundation-appcenter
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+###############################################################################
+## Architecture configuration metadata
+###############################################################################
+arch:
+  __metadata:
+    name: "Architecture"
+    label: "Worker node architecture"
+    description: "Worker node architecture to which this chart should be deployed. Only AMD64 platform is currently supported."
+    type: "string"
+    immutable: "true"
+    required: true
+    options:
+      - label: "AMD64 platforms"
+        value: "amd64"
+
+###############################################################################
+## Common image variables
+###############################################################################
+image:
+  __metadata:
+    label: "Docker image configuration"
+  name:
+    __metadata:
+      label: "Image name"
+      description: "Docker Repository image name"
+      type: "string"
+      immutable: false
+      required: true
+  tag:
+    __metadata:
+      label: "Docker Image tag"
+      description: "Docker Image tag"
+      type: "string"
+      immutable: false
+      required: true
+  pullPolicy:
+    __metadata:
+      name: "pullPolicy"
+      label: "Image pull policy"
+      description: "Always, Never, or IfNotPresent. Defaults to IfNotPresent"
+      type: "string"
+      immutable: false
+      required: true
+      options:
+      - label: "Always"
+        value: "Always"
+      - label: "Never"
+        value: "Never"
+      - label: "IfNotPresent"
+        value: "IfNotPresent"
+
+###############################################################################
+## MobileFirst Application Center Console Credentials
+###############################################################################
+mobileFirstAppCenterConsole:
+  __metadata:
+    label: "MobileFirst Application Center Console Credentials"
+  user:
+    __metadata:
+      label: "Username"
+      description: "Administrator Username"
+      type: "string"
+      immutable: false
+      required: true
+  password:
+    __metadata:
+      label: "Password"
+      description: "Administrator Password"
+      type: "password"
+      immutable: false
+      required: true
+
+###############################################################################
+## Existing DB2 database details for the MobileFirst database
+###############################################################################
+existingDB2Details:
+  __metadata:
+    label: "Existing DB2 database details for the MobileFirst Application Center database"
+  appCenterDB2Host:
+    __metadata:
+      label: "Hostname"
+      description: "DB2 Hostname/IP for MobileFirst Application center to connect"
+      type: "string"
+      immutable: false
+      required: true
+  appCenterDB2Port:
+    __metadata:
+      label: "Port"
+      description: "DB2 Port number for MobileFirst Application Center to connect"
+      type: "string"
+      immutable: false
+      required: true
+  appCenterDB2Username:
+    __metadata:
+      label: "Username"
+      description: "Username to be used to connecto to DB2"
+      type: "string"
+      immutable: false
+      required: true
+  appCenterDB2Password:
+    __metadata:
+      label: "Password"
+      description: "Password for the DB2 user"
+      type: "password"
+      immutable: false
+      required: true
+  appCenterDB2Database:
+    __metadata:
+      label: "Database"
+      description: "Existing DB2 Database name for MobileFirst Application center to connect to."
+      type: "string"
+      immutable: false
+      required: true
+  appCenterDB2Schema:
+    __metadata:
+      label: "Schema Name"
+      description: "DB2 Schema Name to be created when the MobileFirst Application center is created. If the Schema already exists, it will be reused"
+      type: "string"
+      immutable: false
+      required: true
+  appCenterDB2ConnectionIsSSL:
+    __metadata:
+      label: "Connect to DB2 over ssl port"
+      description: "Whether or not the DB2 Connection should be made over SSL. Specify if the port number is an SSL port or not"
+      type: "boolean"
+      immutable: false
+      required: true
+
+
+#####################################################
+## Keystores
+keystores:
+  __metadata:
+    label: "Override default Keystores (Optional)"
+  keystoresSecretName:
+    __metadata:
+      label: "Keystores Secret Name"
+      description: "Name of the existing secret where the keystore and truststore, and their passwords are avaiable. View the readme to create the secret."
+      type: "string"
+      immutable: false
+      required: false
+
+###############################################################################
+## Ingress
+###############################################################################
+ingress:
+  __metadata:
+    label: "Ingress settings"
+  enabled:
+    __metadata:
+      label: "Enable ingress"
+      description: "Specifies whether to use Ingress."
+      type: "boolean"
+      required: true
+  sslSecretName:
+    __metadata:
+      label: "Ingress SSL Certificate Secret name (Optional)"
+      description: "If you need to expose your ingress endpoint over SSL, create a secret with the certificate and provide the name of the secret here. Required if you need to use the ingress endpoint over SSL."
+      type: "string"
+      required: false
+
+###############################################################################
+## Resource constraints
+###############################################################################
+resources:
+  __metadata:
+    label: "Resources"
+  requests:
+    cpu:
+      __metadata:
+        label: "CPU request"
+        description: "The requested CPU"
+        type: "string"
+        required: true
+    memory:
+      __metadata:
+        label: "Memory request"
+        description: "The requested memory"
+        type: "string"
+        required: true
+  limits:
+    cpu:
+      __metadata:
+        label: "CPU limit"
+        description: "The CPU limit"
+        type: "string"
+        required: true
+    memory:
+      __metadata:
+        label: "Memory limit"
+        description: "The memory limit"
+        type: "string"
+        required: true
+
