@@ -29,6 +29,10 @@ RUN /opt/ibm/wlp/bin/server create mfp \
 ADD mfpf-libs/mfpf-server-containers.tgz /
 ADD mfpf-libs/mfpf-server-common-1.tgz /opt/ibm/
 ADD mfpf-libs/mfpf-server-common-2.tgz /opt/ibm/
+COPY mfpf-libs/apache-ant-1.9.4/ /opt/ibm/MobileFirst/apache-ant-1.9.4/
+COPY mfpf-libs/db2jcc4.jar /opt/ibm/MobileFirst/mfpf-libs/
+COPY mfpf-libs/mfp-ant-deployer.jar /opt/ibm/MobileFirst/mfpf-libs
+COPY common/create-database-db2.xml /opt/ibm/MobileFirst/
 COPY licenses/ /opt/ibm/MobileFirst/licenses
 
 # Set password length and expiry for compliance with Vulnerability Advisor
@@ -47,8 +51,10 @@ ENTRYPOINT ["/bin/sh", "-c" ]
 CMD ["/root/bin/run_supervisord"]
 
 COPY usr-mfpf-server/bin/mfp-init /opt/ibm/wlp/bin/
+COPY usr-mfpf-server/bin/wlpropsparser.py /opt/ibm/wlp/bin/
 COPY usr-mfpf-server/bin/liberty-run /opt/ibm/wlp/bin/
-RUN chmod u+x /opt/ibm/wlp/bin/mfp-init
+COPY usr-mfpf-server/bin/mfpdbconfig.sh /opt/ibm/MobileFirst/
+RUN chmod u+x /opt/ibm/wlp/bin/mfp-init && chmod u+x /opt/ibm/MobileFirst/mfpdbconfig.sh && chmod u+x /opt/ibm/wlp/bin/liberty-run
 COPY usr-mfpf-server/security /opt/ibm/wlp/usr/servers/mfp/resources/security/
 COPY usr-mfpf-server/jre-security /opt/ibm/ibm-java-x86_64-80/jre/lib/security/
 COPY usr-mfpf-server/env /opt/ibm/wlp/usr/servers/mfp/

@@ -26,15 +26,15 @@ arch: "amd64"
 ## Common image variables
 ###############################################################################
 image:
-  name: mfpf-server
-  tag: latest
+  name: registry.ng.bluemix.net/prashanthspace/mfpf
+  tag: 6
   pullPolicy: IfNotPresent
 
 ###############################################################################
 ## Scaling
 ###############################################################################
 scaling:
-  replicaCount: 3
+  replicaCount: 1
 
 ###############################################################################
 ## MobileFirst Operations Console Credentials
@@ -47,12 +47,12 @@ mobileFirstOperationsConsole:
 ## Existing DB2 database details for the MobileFirst database
 ###############################################################################
 existingDB2Details:
-  db2Host: ""
-  db2Port: ""
-  db2Username: ""
-  db2Password: ""
-  db2Database: ""
-  db2Schema: ""
+  db2Host: "dashdb-txn-small-yp-dal09-01.services.dal.bluemix.net"
+  db2Port: "50000"
+  db2Username: "bluadmin"
+  db2Password: "NTZjYWJkYjdjNmQ3"
+  db2Database: "BLUDB"
+  db2Schema: "KUBETEST"
   db2ConnectionIsSSL: false
 
 ###############################################################################
@@ -84,8 +84,8 @@ ingress:
 ###############################################################################
 resources:
   requests:
-    cpu: 1000m
-    memory: 2048Mi
+    cpu: 600m
+    memory: 800Mi
   limits:
-    cpu: 2000m
-    memory: 4096Mi
+    cpu: 600m
+    memory: 800Mi
