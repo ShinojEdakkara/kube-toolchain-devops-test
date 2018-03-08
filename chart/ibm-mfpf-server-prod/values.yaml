@@ -27,7 +27,7 @@ arch: "amd64"
 ###############################################################################
 image:
   name: registry.ng.bluemix.net/prashanthspace/mfpf
-  tag: 6
+  tag: 9
   pullPolicy: IfNotPresent
 
 ###############################################################################
@@ -52,7 +52,7 @@ existingDB2Details:
   db2Username: "bluadmin"
   db2Password: "NTZjYWJkYjdjNmQ3"
   db2Database: "BLUDB"
-  db2Schema: "KUBETEST"
+  db2Schema: "HELMTEST"
   db2ConnectionIsSSL: false
 
 ###############################################################################
@@ -84,8 +84,8 @@ ingress:
 ###############################################################################
 resources:
   requests:
-    cpu: 600m
-    memory: 800Mi
+    cpu: 750m
+    memory: 1024Mi
   limits:
-    cpu: 600m
-    memory: 800Mi
+    cpu: 750m
+    memory: 1024Mi

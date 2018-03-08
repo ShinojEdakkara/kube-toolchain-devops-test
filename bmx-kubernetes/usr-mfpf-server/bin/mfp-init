@@ -20,13 +20,13 @@ then
 	rm $mfpfpropsfromenv
 fi
 
-if [ ! -z $mfpfproperties ]
+if [ ! -z "$MFPF_PROPERTIES" ]
 then
-	python /opt/ibm/wlp/bin/wlpropsparser.py $mfpfproperties >> $mfpfpropsfromenv
+	python /opt/ibm/wlp/bin/wlpropsparser.py "$MFPF_PROPERTIES" >> $mfpfpropsfromenv
 fi
 
 # wait for network stack initialization
-while ! ping -c1 bluemix.net &>/dev/null; do :; done
+#while ! ping -c1 bluemix.net &>/dev/null; do :; done
 
 
 #### For Kube
@@ -178,6 +178,31 @@ then
 	fi
 fi
 
+echo "" >> ${envfile}
+if [ -s "/opt/ibm/wlp/usr/servers/mfp/resources/security/certs/truststore-password.txt" ]
+then
+    echo "TRUSTSTORE_PASSWORD=$( cat /opt/ibm/wlp/usr/servers/mfp/resources/security/certs/truststore-password.txt )" >> ${envfile}
+else
+    echo "TRUSTSTORE_PASSWORD=worklight" >> ${envfile}
+fi
+
+if [ -s "/opt/ibm/wlp/usr/servers/mfp/resources/security/certs/truststore.jks" ]
+then
+    cp /opt/ibm/wlp/usr/servers/mfp/resources/security/certs/truststore.jks /opt/ibm/wlp/usr/servers/mfp/resources/security/truststore.jks
+fi
+
+if [ -s "/opt/ibm/wlp/usr/servers/mfp/resources/security/certs/keystore-password.txt" ]
+then
+    echo "KEYSTORE_PASSWORD=$( cat /opt/ibm/wlp/usr/servers/mfp/resources/security/certs/keystore-password.txt )" >> ${envfile}
+else
+    echo "KEYSTORE_PASSWORD=worklight" >> ${envfile}
+fi
+
+if [ -s "/opt/ibm/wlp/usr/servers/mfp/resources/security/certs/keystore.jks" ]
+then
+    cp /opt/ibm/wlp/usr/servers/mfp/resources/security/certs/keystore.jks /opt/ibm/wlp/usr/servers/mfp/resources/security/keystore.jks
+fi
+
 if [ -d /opt/ibm/MobileFirst/envs ]
 then
   for customEnvDirectory in `ls /opt/ibm/MobileFirst/envs`
@@ -186,19 +211,21 @@ then
       then
            for customEnvFile in `ls /opt/ibm/MobileFirst/envs/${customEnvDirectory}`
            do 
+               echo "" >> ${envfile}
                echo "#Content from config map ${customEnvDirectory}/${customEnvFile}" >> ${envfile}
-               cat /opt/ibm/MobileFirst/envs/${customEnvDirectory}/$customEnvFile >>  ${envfile}
+               cat /opt/ibm/MobileFirst/envs/${customEnvDirectory}/$customEnvFile | grep -v "MFPF_PROPERTIES" >>  ${envfile}
                source /opt/ibm/MobileFirst/envs/${customEnvDirectory}/$customEnvFile
            done         
       else
+          echo "" >> ${envfile}
           echo "#Content from config map ${customEnvDirectory}" >> ${envfile}
-          cat /opt/ibm/MobileFirst/envs/${customEnvDirectory} >>  ${envfile}
+          cat /opt/ibm/MobileFirst/envs/${customEnvDirectory} | grep -v "MFPF_PROPERTIES" >>  ${envfile}
           source /opt/ibm/MobileFirst/envs/${customEnvDirectory}
       fi
   done
 fi
 
-if [[ "${ANALYTICS_ADMIN_USER}" = "" ||  "${ANALYTICS_ADMIN_PASSWORD}" = "" ||  "${INGRESS_HOST_FOR_ANALYTICS_CONSOLE}" = "" ||  "${ANALYTICS_CLUSTER_NAME}" = "" ]]
+if [[ "${ANALYTICS_ADMIN_USER}" = "" ||  "${ANALYTICS_ADMIN_PASSWORD}" = "" ||  "${ANALYTICS_ENDPOINT}" = "" ||  "${ANALYTICS_INTERNAL_ENDPOINT}" = "" ]]
 then
   mfpfprops=/opt/ibm/wlp/usr/servers/mfp/configDropins/overrides/mfpfproperties.xml
   mv ${mfpfprops} ${mfpfprops}-moved
