@@ -5,5 +5,5 @@
 	IBM Corp. -->
 <server>
 
- <logging maxFiles="5" traceSpecification="*=info" maxFileSize="20" />
+ <logging maxFiles="6" traceSpecification="*=info" maxFileSize="20" />
 </server>    
